@@ -74,11 +74,12 @@ public class EmployeeService {
         }
     }
 
-    // metodo para obtener empleados por id del trabajo
+    // metodo para obtener empleados por id del trabajo/puesto
     public EmployeeByJobResponse getEmployeesByJob(Long jobId) {
         try {
             // Validamos que el trabajo exista
             if (!jobRepository.existsById(jobId)) {
+                // NO EXISTE EL TRABAJO
                 // si no existe el trabajo, tenemos un problema
                 return new EmployeeByJobResponse(null, false);
             }
@@ -129,6 +130,7 @@ public class EmployeeService {
                 return new EmployeePaymentResponse(null, false);
             }
 
+            // si estamos aqui, es porque ya sabemos que el empleado SI existe
             Employee employee = optional.get();
 
             // Estoy considerando que el sueldo registrado en el trabajo es por hora
@@ -141,6 +143,7 @@ public class EmployeeService {
                             request.getStart_date(),
                             request.getEnd_date()
                     );
+
 
             //if (totalHours == null) totalHours = 0;
             // Multiplicamos el sueldo por hora por la cantidad de horas trabajadas en el rango de fechas

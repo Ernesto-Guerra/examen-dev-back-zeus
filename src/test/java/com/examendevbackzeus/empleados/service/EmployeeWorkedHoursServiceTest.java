@@ -1,6 +1,8 @@
 package com.examendevbackzeus.empleados.service;
 
+import com.examendevbackzeus.empleados.dto.request.GetEmployeeWorkedHoursRequest;
 import com.examendevbackzeus.empleados.dto.request.SaveEmployeeWorkedHoursRequest;
+import com.examendevbackzeus.empleados.dto.response.GetEmployeeWorkedHoursResponse;
 import com.examendevbackzeus.empleados.dto.response.SaveEmployeeWorkedHoursResponse;
 import com.examendevbackzeus.empleados.entity.Employee;
 import com.examendevbackzeus.empleados.entity.EmployeeWorkedHours;
@@ -36,6 +38,7 @@ public class EmployeeWorkedHoursServiceTest {
         MockitoAnnotations.openMocks(this);
     }
 
+    // Pruebas de save() en employeeWorkedHoursService
     @Test
     void saveDebeGuardarConDatosValidos() {
         SaveEmployeeWorkedHoursRequest request = new SaveEmployeeWorkedHoursRequest();
@@ -151,5 +154,91 @@ public class EmployeeWorkedHoursServiceTest {
         verify(employeeWorkedHoursRepository, never()).save(any(EmployeeWorkedHours.class));
     }
 
+    // Pruebas de getWorkedHoursInRange() en employeeWorkedHoursService
+    @Test
+    void getWorkedHoursInRangeDebeRetornarTotalDeHorasCorrecto() {
+        GetEmployeeWorkedHoursRequest request = new GetEmployeeWorkedHoursRequest();
+        request.setEmployee_id(1L);
+        request.setStart_date(LocalDate.of(2024, 1, 1));
+        request.setEnd_date(LocalDate.of(2024, 1, 31));
+
+        // simulamos que el empleado existe
+        when(employeeRepository.existsById(1L)).thenReturn(true);
+
+        // simulamos que el empleado trabajó 40 horas
+        when(employeeWorkedHoursRepository.sumHoursByEmployeeAndDateRange(1L, request.getStart_date(), request.getEnd_date()))
+                .thenReturn(40);
+
+        GetEmployeeWorkedHoursResponse response = employeeWorkedHoursService.getWorkedHoursInRange(request);
+
+        // success true porque el empleado existe y buscamos los datos
+        assertTrue(response.isSuccess());
+        // las horas trabajadas deben ser 40
+        assertEquals(40, response.getTotal_worked_hours());
+    }
+
+    @Test
+    void getWorkedHoursInRangeDebeRetornarCeroSiNoHayRegistros() {
+        GetEmployeeWorkedHoursRequest request = new GetEmployeeWorkedHoursRequest();
+        request.setEmployee_id(1L);
+        request.setStart_date(LocalDate.of(2024, 1, 1));
+        request.setEnd_date(LocalDate.of(2024, 1, 31));
+
+        // simulamos que el empleado existe
+        when(employeeRepository.existsById(1L)).thenReturn(true);
+
+        // simulamos que el empleado no tiene registros de horas trabajadas, por lo que las respuesta es null (el metodo debe convertirlo a 0)
+        when(employeeWorkedHoursRepository.sumHoursByEmployeeAndDateRange(1L, request.getStart_date(), request.getEnd_date()))
+                .thenReturn(null);
+
+        GetEmployeeWorkedHoursResponse response = employeeWorkedHoursService.getWorkedHoursInRange(request);
+
+        // success true porque el empleado existe y buscamos los datos
+        assertTrue(response.isSuccess());
+        // las horas trabajadas deben ser 0 porque no tiene ningun registro en el rango de fechas
+        assertEquals(0, response.getTotal_worked_hours());
+    }
+
+    @Test
+    void getWorkedHoursInRangeDebeFallarSiEmpleadoNoExiste() {
+        GetEmployeeWorkedHoursRequest request = new GetEmployeeWorkedHoursRequest();
+        request.setEmployee_id(99L);
+        request.setStart_date(LocalDate.of(2024, 1, 1));
+        request.setEnd_date(LocalDate.of(2024, 1, 31));
+
+        // simulamos que el empleado no existe
+        when(employeeRepository.existsById(99L)).thenReturn(false);
+
+        GetEmployeeWorkedHoursResponse response = employeeWorkedHoursService.getWorkedHoursInRange(request);
+
+        // success debe ser false porque debe fallar si el empleado no existe
+        assertFalse(response.isSuccess());
+        // las horas trabajadas son null porque no se hizo la busqueda
+        assertNull(response.getTotal_worked_hours());
+        //lavidamos que sumHoursByEmployeeAndDateRange() no haya sido llamado,
+        verify(employeeWorkedHoursRepository, never()).sumHoursByEmployeeAndDateRange(any(Long.class), any(LocalDate.class), any(LocalDate.class));
+    }
+
+    @Test
+    void getWorkedHoursInRangeDebeFallarSiFechaInicioEsDespuesDeFechaFin() {
+        GetEmployeeWorkedHoursRequest request = new GetEmployeeWorkedHoursRequest();
+        request.setEmployee_id(1L);
+        // fecha inicio en 2025
+        request.setStart_date(LocalDate.of(2025, 1, 1));
+        // fecha fin en 2024
+        request.setEnd_date(LocalDate.of(2024, 1, 1));
+
+        // simulamos que el empleado existe
+        when(employeeRepository.existsById(1L)).thenReturn(true);
+
+        GetEmployeeWorkedHoursResponse response = employeeWorkedHoursService.getWorkedHoursInRange(request);
+
+        // debe fallar porque la fecha inicio es despues de la fecha fin
+        assertFalse(response.isSuccess());
+        // las horas trabajadas deben ser null falló la verificacion de fechas
+        assertNull(response.getTotal_worked_hours());
+        // validamos que sumHoursByEmployeeAndDateRange() no haya sido llamado, debe fallar antes
+        verify(employeeWorkedHoursRepository, never()).sumHoursByEmployeeAndDateRange(any(Long.class), any(LocalDate.class), any(LocalDate.class));
+    }
 
 }
