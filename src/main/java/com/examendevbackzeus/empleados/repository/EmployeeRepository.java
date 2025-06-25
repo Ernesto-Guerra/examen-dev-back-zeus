@@ -7,11 +7,13 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     boolean existsByNameIgnoreCaseAndLastNameIgnoreCase(String name, String lastName);
     List<Employee> findByJobId(Long jobId);
+    Optional<Employee> findById(Long employeeId);
     @Query("SELECT SUM(e.hours) FROM EmployeeWorkedHours e WHERE e.employee.id = :employeeId AND e.workedDate BETWEEN :start AND :end")
     Integer sumHoursByEmployeeIdAndDateRange(Long employeeId, LocalDate start, LocalDate end);
 

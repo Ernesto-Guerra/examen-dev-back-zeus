@@ -15,6 +15,10 @@ public class Job {
     @Column(precision = 9, scale = 2)
     private BigDecimal salary;
 
+    public Job(){}
+    public Job(Long l, String nombre, BigDecimal bigDecimal) {
+    }
+
     public Long getId() {
         return id;
     }

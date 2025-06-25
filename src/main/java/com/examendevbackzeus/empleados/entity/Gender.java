@@ -11,6 +11,10 @@ public class Gender {
 
     private String name;
 
+    public Gender(){}
+    public Gender(Long l, String nombre) {
+    }
+
     public String getName() {
         return name;
     }

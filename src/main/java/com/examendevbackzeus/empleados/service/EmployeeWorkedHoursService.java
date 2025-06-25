@@ -11,6 +11,7 @@ import com.examendevbackzeus.empleados.repository.EmployeeWorkedHoursRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 @Service
 public class EmployeeWorkedHoursService {
@@ -25,10 +26,9 @@ public class EmployeeWorkedHoursService {
     public SaveEmployeeWorkedHoursResponse save(SaveEmployeeWorkedHoursRequest request) {
         try{
             // Validamos que el empleado exista mediante el id
-            Employee employee = employeeRepository.findById(request.getEmployee_id()).orElse(null);
-
+            Optional<Employee> employee = employeeRepository.findById(request.getEmployee_id());
             // Si no existe empleado con ese id, no podemos hacer el registro
-            if (employee == null) return new SaveEmployeeWorkedHoursResponse(null, false);
+            if (employee.isEmpty()) return new SaveEmployeeWorkedHoursResponse(null, false);
 
             // Validamos que sea una fecha que aun no haya pasado
             if (request.getWorked_date().isAfter(LocalDate.now()))
@@ -48,9 +48,10 @@ public class EmployeeWorkedHoursService {
 
             // Construir EmployeeWorkedHours
             EmployeeWorkedHours registro = new EmployeeWorkedHours();
-            registro.setEmployee(employee);
+            registro.setEmployee(employee.get());
             registro.setWorkedDate(request.getWorked_date());
             registro.setHours(request.getHours());
+
 
             // Mandamos el registro para guardarlo
             EmployeeWorkedHours saved = workedHoursRepository.save(registro);

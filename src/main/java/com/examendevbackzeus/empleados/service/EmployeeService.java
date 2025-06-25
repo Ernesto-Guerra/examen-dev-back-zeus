@@ -38,15 +38,15 @@ public class EmployeeService {
     // metodo para crear nuevos empleados
     public SaveEmployeeResponse save(SaveEmployeeRequest employee){
         try{
+            // buscamos si existe empleado con ese nombre y apellido
             boolean exists = employeeRepository.existsByNameIgnoreCaseAndLastNameIgnoreCase(
                     employee.getName(), employee.getLastName());
             if (exists) return new SaveEmployeeResponse(null, false);
 
             // Validamos que el empleado sea mayor de edad (al menos 18 años)
-            if (Period.between(employee.getBirthdate(), LocalDate.now()).getYears() < 18)
+            if ((Period.between(employee.getBirthdate(), LocalDate.now()).getYears()) < 18)
                 return new SaveEmployeeResponse(null, false);
 
-            // Validación de catálogo
             Gender gender = genderRepository.findById(employee.getGender_id())
                     .orElse(null);
             if (gender == null) return new SaveEmployeeResponse(null, false);

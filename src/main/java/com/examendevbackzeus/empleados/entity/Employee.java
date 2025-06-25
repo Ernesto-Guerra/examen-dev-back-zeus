@@ -36,6 +36,9 @@ public class Employee {
     @NotNull(message = "La fecha de nacimiento es obligatoria.")
     private LocalDate birthdate;
 
+    public Employee(){}
+    public Employee(Long id, Gender gender, Job job, String name, String lastName, LocalDate birthdate){}
+
     public Long getId() {
         return id;
     }
