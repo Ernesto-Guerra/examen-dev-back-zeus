@@ -37,7 +37,15 @@ public class Employee {
     private LocalDate birthdate;
 
     public Employee(){}
-    public Employee(Long id, Gender gender, Job job, String name, String lastName, LocalDate birthdate){}
+    public Employee(Long id, Gender gender, Job job, String name, String lastName, LocalDate birthdate) {
+        this.id = id;
+        this.gender = gender;
+        this.job = job;
+        this.name = name;
+        this.lastName = lastName;
+        this.birthdate = birthdate;
+    }
+
 
     public Long getId() {
         return id;

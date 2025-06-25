@@ -12,8 +12,11 @@ public class Gender {
     private String name;
 
     public Gender(){}
-    public Gender(Long l, String nombre) {
+    public Gender(Long id, String name) {
+        this.id = id;
+        this.name = name;
     }
+
 
     public String getName() {
         return name;

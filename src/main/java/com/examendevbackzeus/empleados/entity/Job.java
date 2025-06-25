@@ -16,8 +16,12 @@ public class Job {
     private BigDecimal salary;
 
     public Job(){}
-    public Job(Long l, String nombre, BigDecimal bigDecimal) {
+    public Job(Long id, String name, BigDecimal salary) {
+        this.id = id;
+        this.name = name;
+        this.salary = salary;
     }
+
 
     public Long getId() {
         return id;
