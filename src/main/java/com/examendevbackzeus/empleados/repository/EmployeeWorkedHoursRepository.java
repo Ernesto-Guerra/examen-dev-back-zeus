@@ -11,7 +11,10 @@ import java.util.Optional;
 
 public interface EmployeeWorkedHoursRepository extends JpaRepository<EmployeeWorkedHours, Long> {
     boolean existsByEmployeeIdAndWorkedDate(Long employeeId, LocalDate workedDate);
+
+    @NonNull
     Optional<EmployeeWorkedHours> findById(@NonNull Long employeeId);
+
     @Query("SELECT SUM(e.hours) FROM EmployeeWorkedHours e WHERE e.employee.id = :employeeId AND e.workedDate BETWEEN :startDate AND :endDate")
     Integer sumHoursByEmployeeAndDateRange(
             @Param("employeeId") Long employeeId,
