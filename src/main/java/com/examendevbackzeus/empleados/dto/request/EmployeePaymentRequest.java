@@ -1,17 +1,21 @@
 package com.examendevbackzeus.empleados.dto.request;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
 
 public class EmployeePaymentRequest {
     @NotNull
+    @Schema(description = "ID del empleado", example = "1")
     private Long employee_id;
 
     @NotNull
+    @Schema(description = "Fecha de inicio del rango", example = "2024-10-30")
     private LocalDate start_date;
 
     @NotNull
+    @Schema(description = "Fecha de fin del rango", example = "2025-10-30")
     private LocalDate end_date;
 
     public Long getEmployee_id() {

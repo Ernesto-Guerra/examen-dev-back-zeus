@@ -1,9 +1,13 @@
 package com.examendevbackzeus.empleados.dto.response;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.math.BigDecimal;
 
 public class EmployeePaymentResponse {
+    @Schema(description = "Cantidad pagada al empleado")
     private BigDecimal payment;
+    @Schema(description = "Resultado de la operacion")
     private boolean success;
 
     public EmployeePaymentResponse(BigDecimal payment, boolean success) {

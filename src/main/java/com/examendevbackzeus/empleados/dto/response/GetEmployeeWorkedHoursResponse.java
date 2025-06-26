@@ -1,7 +1,11 @@
 package com.examendevbackzeus.empleados.dto.response;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 public class GetEmployeeWorkedHoursResponse {
+    @Schema(description = "Total de horas trabajadas en el rango de fechas")
     private Integer total_worked_hours;
+    @Schema(description = "Resultado de la operacion")
     private boolean success;
 
     public GetEmployeeWorkedHoursResponse(Integer total_worked_hours, boolean success) {
